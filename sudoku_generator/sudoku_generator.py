@@ -8,37 +8,46 @@ class Sudoku:
         self.cell_size = int(self.total_size**0.5)
         self.possible_numbers = np.ndarray((self.total_size, self.total_size, self.total_size), dtype=bool)
         self.possible_numbers.fill(True)
-        # self.free_positions = np.ndarray((self.total_size, self.total_size), dtype=bool)
-        # self.free_positions.fill(True)
         self.number_selection_memory = []
         self.number_selection_random = []
-        self.next_position = (0, 0)
 
     def generate_grid(self):
         np.random.seed(50)
-        while any(self.free_positions):
+        while any(self.grid == 0):
             self.randomly_fill_next_position()
-            self.update_available_options()
             self.fill_options_single_choice()
 
     def randomly_fill_next_position(self):
-        available_options = self.grid[self.next_position]
-        choice = np.random.choice(available_options)
-        self.grid[self.next_position] = choice
-        self.free_positions[self.next_position] = False
-        self.number_selection_memory.append(self.next_position)
-        self.number_selection_random.append(True)
+        next_position = self.get_next_free_position()
+        if not next_position == (-1, -1):
+            available_options = self.grid[next_position]
+            choice = np.random.choice(available_options)
+            self.grid[self.next_position] = choice
+            self.number_selection_memory.append(next_position)
+            self.number_selection_random.append(True)
 
     def fill_options_single_choice(self):
-        position_filled = True
-        while position_filled:
-            self.check_positions_single_choice()
-            position_filled = self.fill_positions_single_choice()
-            if position_filled:
-                self.update_available_options()
-                no_options = self.check_no_options_fields()
-                if no_options:
-                    self.rollback_last_random()
+        free_position = self.get_next_free_position()
+        if free_position != (-1, -1):
+            self.fill_position(free_position, self.possible_numbers(free_position))
+
+
+    def get_next_free_position(self):
+        with np.nditer(self.possible_numbers, flags=['multi_index'], op_flags=['writeonly']) as positions:
+            for position in positions:
+                if position == 0:
+                    return positions.multi_index[1]
+        return -1, -1
+
+    def check_single_option_positions(self):
+        with np.nditer(self.possible_numbers, flags=['multi_index'], op_flags=['writeonly']) as positions:
+            for position in positions:
+                if sum(self.possible_numbers[position]) == 1 and self.grid[position] == 0:
+                    return position
+        return -1, -1
+
+    def fill_position(self, position, number):
+        self.grid[position] = number
 
     def reset_available_options(self):
         for position in self.number_selection_memory:
@@ -60,10 +69,7 @@ class Sudoku:
         cell_y = (position[1] // self.cell_size) * self.cell_size
         self.possible_numbers[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size, number] = False
 
-    def fill_position_single_choice(self):
-        position = self.find_position_single_choice()
-        if position == ():
-            return False
+
 
     def check_positions_single_choice(self):
         pass
