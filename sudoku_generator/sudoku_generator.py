@@ -4,7 +4,7 @@ class Sudoku:
 
     def __init__(self, size):
         self.total_size = size #size of sudoku = total_size * total_size, can be 2,4,9
-        self.grid = np.zeros((self.total_size, self.total_size))
+        self.grid = np.zeros((self.total_size, self.total_size), dtype=int)
         self.cell_size = int(self.total_size**0.5)
         self.possible_numbers = np.ndarray((self.total_size, self.total_size, self.total_size), dtype=bool)
         self.possible_numbers.fill(True)
@@ -40,12 +40,9 @@ class Sudoku:
                 if no_options:
                     self.rollback_last_random()
 
-    def update_available_options(self, new_pos, new_number):
-        self.grid[new_pos] = new_number
-        positions = np.nditer(self.grid, flags=['multi_index'])
-        for number in positions:
-            self.update_options_single_number(position, number)
-            print("%d <%s>" % (number, positions.multi_index), end=' ')
+    def reset_available_options(self):
+        for position in self.number_selection_memory:
+            self.update_options_single_number(position, self.grid[position])
 
     def update_options_single_number(self, position, number):
         self.update_row(position[0], number)
