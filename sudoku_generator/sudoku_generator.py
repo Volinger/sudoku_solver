@@ -61,7 +61,7 @@ class Sudoku:
     def update_cell(self, position, number):
         cell_x = (position[0] // self.cell_size) * self.cell_size
         cell_y = (position[1] // self.cell_size) * self.cell_size
-        self.grid[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size, number] = False
+        self.possible_numbers[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size, number] = False
 
     def fill_position_single_choice(self):
         position = self.find_position_single_choice()
@@ -120,7 +120,7 @@ class Sudoku:
         cell = self.grid[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size]
         result = (number in cell)
         return not result
-
-x = Sudoku()
-x.generate_grid()
-print(x.grid)
+#
+# x = Sudoku()
+# x.generate_grid()
+# print(x.grid)
