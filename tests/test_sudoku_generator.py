@@ -24,6 +24,12 @@ class TestSudoku:
     #     sudoku.generate_grid()
     #     assert False
 
+    def test_rollback_last_random(self, sudoku):
+        sudoku.number_selection_memory = [(1, 1), (2, 2), (3, 3)]
+        sudoku.number_selection_random = [True, True, False]
+        sudoku.rollback_last_random()
+        assert sudoku.number_selection_memory == [(1, 1)] and sudoku.number_selection_random == [True]
+
     def test_fill_single_choice(self, sudoku):
         sudoku.possible_numbers[3, 3, :3] = False
         sudoku.fill_single_choice((3, 3))

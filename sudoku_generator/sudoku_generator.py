@@ -31,7 +31,11 @@ class Sudoku:
         return np.any(empty_without_options)
 
     def rollback_last_random(self):
-        pass
+        for random_indicator in reversed(self.number_selection_random):
+            self.number_selection_memory.pop()
+            self.number_selection_random.pop()
+            if random_indicator:
+                break
 
     def randomly_fill_next_position(self):
         next_position = self.get_next_free_position()
