@@ -26,25 +26,17 @@ class Sudoku:
             self.number_selection_memory.append(next_position)
             self.number_selection_random.append(True)
 
-    def fill_options_single_choice(self):
-        free_position = self.get_next_free_position()
-        if free_position != (-1, -1):
-            self.fill_position(free_position, self.possible_numbers(free_position))
+    def fill_next_single_choice(self):
+        single_option_position = self.get_next_single_option_position()
+        single_option_value = np.where(self.possible_numbers[single_option_position])[0] + 1
+        if single_option_position != -1:
+            self.fill_position(single_option_position, single_option_value)
 
-
-    def get_next_free_position(self):
-        with np.nditer(self.possible_numbers, flags=['multi_index'], op_flags=['writeonly']) as positions:
-            for position in positions:
-                if position == 0:
-                    return positions.multi_index[1]
-        return -1, -1
-
-    def check_single_option_positions(self):
-        with np.nditer(self.possible_numbers, flags=['multi_index'], op_flags=['writeonly']) as positions:
-            for position in positions:
-                if sum(self.possible_numbers[position]) == 1 and self.grid[position] == 0:
-                    return position
-        return -1, -1
+    def get_next_single_option_position(self):
+        for position in np.ndindex(self.possible_numbers.shape[:2]):
+            if sum(self.possible_numbers[position]) == 1:
+                return position
+        return -1
 
     def fill_position(self, position, number):
         self.grid[position] = number
@@ -69,60 +61,58 @@ class Sudoku:
         cell_y = (position[1] // self.cell_size) * self.cell_size
         self.possible_numbers[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size, number] = False
 
-
-
-    def check_positions_single_choice(self):
-        pass
-
-    def check_no_options_fields(self):
-        pass
-
-    def find_position_single_choice(self):
-        pass
-
-    def fill_position(self):
-        pass
-
-    def rollback_last_random(self):
-        pass
-
-    def single_number_fill(self, number):
-        for row_number, row in enumerate(self.grid):
-            choices = np.arange(0, self.total_size)
-            rules_passed = False
-            out_of_options = False
-            while not rules_passed:
-                generated_position = [row_number, np.random.choice(choices)]
-                rules_passed = self.check_rules(generated_position, number)
-                if rules_passed:
-                    self.grid[tuple(generated_position)] = number
-                else:
-                    choices = np.delete(choices, np.where(choices == generated_position[1]))
-                    out_of_options = not choices.any()
-            if out_of_options:
-                break
-
-    def check_rules(self, position_to_occupy, number):
-        column_ok = self.check_column(position_to_occupy[1], number)
-        position_ok = self.check_position(position_to_occupy)
-        cell_ok = self.check_cell(position_to_occupy, number)
-        rules_passed = all([column_ok, position_ok, cell_ok])
-        return rules_passed
-
-    def check_position(self, position_to_occupy):
-        position_free = self.grid[tuple(position_to_occupy)] == 0
-        return position_free
-
-    def check_column(self, column_index, number):
-        column = self.grid[:, column_index]
-        return not (number in column)
-
-    def check_cell(self, position, number):
-        cell_x = (position[0] // self.cell_size) * self.cell_size
-        cell_y = (position[1] // self.cell_size) * self.cell_size
-        cell = self.grid[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size]
-        result = (number in cell)
-        return not result
+    # def check_positions_single_choice(self):
+    #     pass
+    #
+    # def check_no_options_fields(self):
+    #     pass
+    #
+    # def find_position_single_choice(self):
+    #     pass
+    #
+    # def fill_position(self):
+    #     pass
+    #
+    # def rollback_last_random(self):
+    #     pass
+    #
+    # def single_number_fill(self, number):
+    #     for row_number, row in enumerate(self.grid):
+    #         choices = np.arange(0, self.total_size)
+    #         rules_passed = False
+    #         out_of_options = False
+    #         while not rules_passed:
+    #             generated_position = [row_number, np.random.choice(choices)]
+    #             rules_passed = self.check_rules(generated_position, number)
+    #             if rules_passed:
+    #                 self.grid[tuple(generated_position)] = number
+    #             else:
+    #                 choices = np.delete(choices, np.where(choices == generated_position[1]))
+    #                 out_of_options = not choices.any()
+    #         if out_of_options:
+    #             break
+    #
+    # def check_rules(self, position_to_occupy, number):
+    #     column_ok = self.check_column(position_to_occupy[1], number)
+    #     position_ok = self.check_position(position_to_occupy)
+    #     cell_ok = self.check_cell(position_to_occupy, number)
+    #     rules_passed = all([column_ok, position_ok, cell_ok])
+    #     return rules_passed
+    #
+    # def check_position(self, position_to_occupy):
+    #     position_free = self.grid[tuple(position_to_occupy)] == 0
+    #     return position_free
+    #
+    # def check_column(self, column_index, number):
+    #     column = self.grid[:, column_index]
+    #     return not (number in column)
+    #
+    # def check_cell(self, position, number):
+    #     cell_x = (position[0] // self.cell_size) * self.cell_size
+    #     cell_y = (position[1] // self.cell_size) * self.cell_size
+    #     cell = self.grid[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size]
+    #     result = (number in cell)
+    #     return not result
 #
 # x = Sudoku()
 # x.generate_grid()
