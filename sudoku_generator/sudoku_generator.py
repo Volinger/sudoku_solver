@@ -15,7 +15,23 @@ class Sudoku:
         np.random.seed(50)
         while any(self.grid == 0):
             self.randomly_fill_next_position()
-            self.fill_options_single_choice()
+            while True:
+                single_position = self.check_next_single_option_position()
+                if single_position != -1:
+                    self.fill_single_choice()
+                else:
+                    break
+
+    def check_no_options(self):
+        empty_positions = self.grid == 0
+        positions_without_options = np.ndarray((self.total_size, self.total_size), dtype=bool)
+        for position in np.ndindex(self.possible_numbers.shape[:2]):
+            positions_without_options[position] = not any(self.possible_numbers[(position)])
+        empty_without_options = np.logical_and(empty_positions, positions_without_options)
+        return np.any(empty_without_options)
+
+    def rollback_last_random(self):
+        pass
 
     def randomly_fill_next_position(self):
         next_position = self.get_next_free_position()
@@ -26,13 +42,11 @@ class Sudoku:
             self.number_selection_memory.append(next_position)
             self.number_selection_random.append(True)
 
-    def fill_next_single_choice(self):
-        single_option_position = self.get_next_single_option_position()
-        single_option_value = np.where(self.possible_numbers[single_option_position])[0] + 1
-        if single_option_position != -1:
-            self.fill_position(single_option_position, single_option_value)
+    def fill_single_choice(self, position):
+        single_option_value = np.where(self.possible_numbers[position])[0] + 1
+        self.fill_position(position, single_option_value)
 
-    def get_next_single_option_position(self):
+    def check_next_single_option_position(self):
         for position in np.ndindex(self.possible_numbers.shape[:2]):
             if sum(self.possible_numbers[position]) == 1:
                 return position

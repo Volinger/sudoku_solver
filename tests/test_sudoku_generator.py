@@ -13,17 +13,28 @@ def sudoku():
 
 class TestSudoku:
 
-    def test_fill_options_single_choice(self, sudoku):
+    def test_check_no_options__false(self, sudoku):
+        assert not sudoku.check_no_options()
+
+    def test_check_no_options__true(self, sudoku):
+        sudoku.possible_numbers[2, 2, :] = False
+        assert sudoku.check_no_options()
+
+    # def test_generate_grid(self, sudoku):
+    #     sudoku.generate_grid()
+    #     assert False
+
+    def test_fill_single_choice(self, sudoku):
         sudoku.possible_numbers[3, 3, :3] = False
-        sudoku.fill_next_single_choice()
+        sudoku.fill_single_choice((3, 3))
         assert sudoku.grid[3, 3] == 4
 
-    def test_get_next_single_option_position__exists(self, sudoku):
+    def test_check_next_single_option_position__exists(self, sudoku):
         sudoku.possible_numbers[3, 3, 1:] = False
-        assert sudoku.get_next_single_option_position() == (3, 3)
+        assert sudoku.check_next_single_option_position() == (3, 3)
 
-    def test_get_next_single_option_position__none(self, sudoku):
-        assert sudoku.get_next_single_option_position() == -1
+    def test_check_next_single_option_position__none(self, sudoku):
+        assert sudoku.check_next_single_option_position() == -1
 
     def test_reset_available_options(self, sudoku):
         sudoku.grid[1, 1] = 2
