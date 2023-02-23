@@ -49,12 +49,15 @@ class Sudoku:
                 break
 
     def reset_dependent_rollbacks(self, max_position):
-        positions = np.ndindex(self.grid.shape)
+        positions = np.ndindex(self.rollbacked_filter.shape[:2])
         positions_filtered = []
-        for position in reversed(positions):
+        reverse = reversed(list(positions))
+        for position in reverse:
             if position == max_position:
                 break
             positions_filtered.append(position)
+        for position in positions_filtered:
+            self.rollbacked_filter[position] = True
 
     def randomly_fill_next_position(self):
         next_position = self.get_next_free_position()
@@ -77,6 +80,8 @@ class Sudoku:
     def fill_single_choice(self, position):
         single_option_value = np.where(self.get_allowed_numbers()[position])[0] + 1
         self.fill_position(position, single_option_value)
+        self.number_selection_memory.append(position)
+        self.number_selection_random.append(False)
         self.update_options_single_number(position, single_option_value)
 
     def check_next_single_option_position(self):
