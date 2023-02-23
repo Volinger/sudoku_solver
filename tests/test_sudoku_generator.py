@@ -24,6 +24,15 @@ class TestSudoku:
     #     sudoku.generate_grid()
     #     assert False
 
+    def test_randomly_fill_next_position(self, sudoku):
+        np.random.seed(50)
+        sudoku.randomly_fill_next_position()
+        assert sudoku.grid[0, 0] == 1
+
+    def test_get_next_free_position(self, sudoku):
+        sudoku.grid[0, 0] = 1
+        assert sudoku.get_next_free_position() == (0, 1)
+
     def test_rollback_last_random(self, sudoku):
         sudoku.number_selection_memory = [(1, 1), (2, 2), (3, 3)]
         sudoku.number_selection_random = [True, True, False]

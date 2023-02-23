@@ -13,11 +13,13 @@ class Sudoku:
 
     def generate_grid(self):
         np.random.seed(50)
-        while any(self.grid == 0):
+        while np.any(self.grid == 0):
             self.randomly_fill_next_position()
             while True:
-                single_position = self.check_next_single_option_position()
-                if single_position != -1:
+                if self.check_no_options():
+                    self.rollback_last_random()
+                    break
+                elif self.check_next_single_option_position() != -1:
                     self.fill_single_choice()
                 else:
                     break
@@ -39,12 +41,20 @@ class Sudoku:
 
     def randomly_fill_next_position(self):
         next_position = self.get_next_free_position()
-        if not next_position == (-1, -1):
-            available_options = self.grid[next_position]
+        if not next_position == -1:
+            options = np.arange(1, self.total_size+1)
+            available_mask = self.possible_numbers[next_position]
+            available_options = options[available_mask]
             choice = np.random.choice(available_options)
-            self.grid[self.next_position] = choice
+            self.grid[next_position] = choice
             self.number_selection_memory.append(next_position)
             self.number_selection_random.append(True)
+
+    def get_next_free_position(self):
+        for position in np.ndindex(self.grid.shape):
+            if self.grid[position] == 0:
+                return position
+        return -1
 
     def fill_single_choice(self, position):
         single_option_value = np.where(self.possible_numbers[position])[0] + 1
@@ -132,6 +142,6 @@ class Sudoku:
     #     result = (number in cell)
     #     return not result
 #
-# x = Sudoku()
+# x = Sudoku(size=4)
 # x.generate_grid()
 # print(x.grid)
