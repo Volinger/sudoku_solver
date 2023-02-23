@@ -19,8 +19,8 @@ class Sudoku:
                 if self.check_no_options():
                     self.rollback_last_random()
                     break
-                elif self.check_next_single_option_position() != -1:
-                    self.fill_single_choice()
+                elif (position := self.check_next_single_option_position()) != -1:
+                    self.fill_single_choice(position)
                 else:
                     break
 
@@ -49,6 +49,7 @@ class Sudoku:
             self.grid[next_position] = choice
             self.number_selection_memory.append(next_position)
             self.number_selection_random.append(True)
+            self.update_options_single_number(next_position, choice)
 
     def get_next_free_position(self):
         for position in np.ndindex(self.grid.shape):
@@ -57,8 +58,9 @@ class Sudoku:
         return -1
 
     def fill_single_choice(self, position):
-        single_option_value = np.where(self.possible_numbers[position])[0] + 1
+        single_option_value = np.where(self.possible_numbers[position])[0, 0] + 1
         self.fill_position(position, single_option_value)
+        self.update_options_single_number(position, single_option_value)
 
     def check_next_single_option_position(self):
         for position in np.ndindex(self.possible_numbers.shape[:2]):
@@ -79,15 +81,15 @@ class Sudoku:
         self.update_cell(position, number)
 
     def update_row(self, row, number):
-        self.possible_numbers[row, :, number] = False
+        self.possible_numbers[row, :, number-1] = False
 
     def update_column(self, column, number):
-        self.possible_numbers[:, column, number] = False
+        self.possible_numbers[:, column, number-1] = False
 
     def update_cell(self, position, number):
         cell_x = (position[0] // self.cell_size) * self.cell_size
         cell_y = (position[1] // self.cell_size) * self.cell_size
-        self.possible_numbers[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size, number] = False
+        self.possible_numbers[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size, number-1] = False
 
     # def check_positions_single_choice(self):
     #     pass
@@ -142,6 +144,6 @@ class Sudoku:
     #     result = (number in cell)
     #     return not result
 #
-# x = Sudoku(size=4)
-# x.generate_grid()
-# print(x.grid)
+x = Sudoku(size=4)
+x.generate_grid()
+print(x.grid)
