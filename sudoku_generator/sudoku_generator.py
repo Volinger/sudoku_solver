@@ -58,13 +58,13 @@ class Sudoku:
         return -1
 
     def fill_single_choice(self, position):
-        single_option_value = np.where(self.possible_numbers[position])[0, 0] + 1
+        single_option_value = np.where(self.possible_numbers[position])[0] + 1
         self.fill_position(position, single_option_value)
         self.update_options_single_number(position, single_option_value)
 
     def check_next_single_option_position(self):
         for position in np.ndindex(self.possible_numbers.shape[:2]):
-            if sum(self.possible_numbers[position]) == 1:
+            if sum(self.possible_numbers[position]) == 1 and self.grid[position] == 0:
                 return position
         return -1
 
