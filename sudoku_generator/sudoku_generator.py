@@ -6,18 +6,21 @@ class Sudoku:
         self.total_size = size #size of sudoku = total_size * total_size, can be 2,4,9
         self.grid = np.zeros((self.total_size, self.total_size), dtype=int)
         self.cell_size = int(self.total_size**0.5)
-        self.possible_numbers = np.ndarray((self.total_size, self.total_size, self.total_size), dtype=bool)
-        self.possible_numbers.fill(True)
+        self.init_possible_numbers()
         self.number_selection_memory = []
         self.number_selection_random = []
         self.rollbacked_filter = np.ndarray((self.total_size, self.total_size, self.total_size), dtype=bool)
         self.rollbacked_filter.fill(True)
 
+    def init_possible_numbers(self):
+        self.possible_numbers = np.ndarray((self.total_size, self.total_size, self.total_size), dtype=bool)
+        self.possible_numbers.fill(True)
+
     def get_allowed_numbers(self):
         return np.multiply(self.possible_numbers, self.rollbacked_filter)
 
-    def generate_grid(self):
-        np.random.seed(51)
+    def generate_grid(self, seed=50):
+        np.random.seed(seed)
         while np.any(self.grid == 0):
             self.randomly_fill_next_position()
             while True:
@@ -46,6 +49,7 @@ class Sudoku:
             if random_indicator:
                 self.rollbacked_filter[position, previous_value] = False
                 self.reset_dependent_rollbacks(position)
+                self.reset_available_options()
                 break
 
     def reset_dependent_rollbacks(self, max_position):
@@ -94,6 +98,7 @@ class Sudoku:
         self.grid[position] = number
 
     def reset_available_options(self):
+        self.init_possible_numbers()
         for position in self.number_selection_memory:
             self.update_options_single_number(position, self.grid[position])
 
@@ -166,6 +171,6 @@ class Sudoku:
     #     result = (number in cell)
     #     return not result
 #
-x = Sudoku(size=9)
-x.generate_grid()
-print(x.grid)
+# x = Sudoku(size=9)
+# x.generate_grid()
+# print(x.grid)

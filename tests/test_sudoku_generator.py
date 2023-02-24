@@ -13,6 +13,14 @@ def sudoku():
 
 class TestSudoku:
 
+    def test_get_allowed_numbers(self, sudoku):
+        sudoku.possible_numbers[0, 0, 0] = False
+        sudoku.rollbacked_filter[1, 1, 1] = False
+        expected = np.ndarray((sudoku.total_size, sudoku.total_size, sudoku.total_size), dtype=bool)
+        expected.fill(True)
+        expected[0, 0, 0] = expected[1, 1, 1] = False
+        assert (sudoku.get_allowed_numbers() == expected).all()
+
     def test_check_no_options__false(self, sudoku):
         assert not sudoku.check_no_options()
 
@@ -20,9 +28,9 @@ class TestSudoku:
         sudoku.possible_numbers[2, 2, :] = False
         assert sudoku.check_no_options()
 
-    # def test_generate_grid(self, sudoku):
-    #     sudoku.generate_grid()
-    #     assert False
+    def test_generate_grid(self, sudoku):
+        sudoku.generate_grid()
+        assert False
 
     def test_randomly_fill_next_position(self, sudoku):
         np.random.seed(50)
