@@ -13,7 +13,7 @@ class Sudoku:
 
         :param size: int, defines size of sudoku grid, i.e. 4 for numbers 1-4, 9 for numbers 1-9 etc.
         """
-        self.total_size = size #size of sudoku = total_size * total_size, can be 2,4,9
+        self.total_size = size #size of sudoku = total_size * total_size, can be 4,9,16...
         self.grid = np.zeros((self.total_size, self.total_size), dtype=int)
         self.cell_size = int(self.total_size**0.5)
         self.init_possible_numbers()
@@ -150,8 +150,9 @@ class Sudoku:
         :return:
         """
         self.init_possible_numbers()
-        for position in self.number_selection_memory:
-            self.update_options_single_number(position, self.grid[position])
+        for position in np.ndindex(self.grid.shape):
+            if self.grid[position] != 0:
+                self.update_options_single_number(position, self.grid[position])
 
     def update_options_single_number(self, position, number):
         """

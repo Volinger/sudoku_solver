@@ -14,24 +14,20 @@ class Difficulty(IntEnum):
 
 class SudokuPreparer:
 
-    def __init__(self):
+    def __init__(self, size, seed):
         self.sudoku = None
         self.available_for_removal = None
         self.removed_all_numbers = False
-
-    def generate(self, seed):
-        self.sudoku = Sudoku()
-        Sudoku.generate_grid(seed)
-        self.available_for_removal = np.ndarray(np.ndindex(self.sudoku.grid.shape), dtype=bool)
+        self.sudoku = Sudoku(size)
+        self.sudoku.generate_grid(seed)
+        self.available_for_removal = np.ndarray((self.sudoku.total_size, self.sudoku.total_size), dtype=bool)
         self.available_for_removal.fill(True)
 
-    def prepare(self, difficulty, seed):
-        sudoku = self.generate(seed)
-        self.difficulty_select(difficulty)
-        self.remove_numbers()
-        return sudoku.grid
+    def prepare(self, difficulty):
+        self.remove_numbers(difficulty)
+        return self.sudoku.grid
 
-    def remove_numbers(self, difficulty):
+    def remove_numbers(self, difficulty: Difficulty):
         for x in range(difficulty):
             removed = self.remove_random_number()
             if not removed:
@@ -40,23 +36,33 @@ class SudokuPreparer:
 
     def remove_random_number(self):
         while True:
-            position = np.random.choice(np.ndindex(self.available_for_removal.shape)[self.available_for_removal])
+            nonzero_indices = np.nonzero(self.sudoku.grid)
+            positions = np.array(list(zip(nonzero_indices[0], nonzero_indices[1])))
+            ndx = np.random.choice(len(positions))
+            position = tuple(positions[ndx])
+            previous_value = self.sudoku.grid[position]
             self.sudoku.grid[position] = 0
-            solvable = self.sudoku.check_solvable()
+            solvable = self.check_solvable()
             self.available_for_removal[position] = False
             if solvable:
                 return True
-            elif any(self.available_for_removal):
+            elif self.available_for_removal.any():
+                self.sudoku.grid[position] = previous_value
                 continue
             else:
+                self.sudoku.grid[position] = previous_value
                 return False
 
     def check_solvable(self):
+        self.sudoku.reset_available_options()
+        original_grid = self.sudoku.grid.copy()
         while True:
             if (position := self.sudoku.check_next_single_option_position()) != -1:
                 self.sudoku.fill_single_choice(position)
-            elif self.sudoku.check_next_single_option_position == -1:
-                if any(self.sudoku.grid == 0):
+            elif self.sudoku.check_next_single_option_position() == -1:
+                if (self.sudoku.grid == 0).any():
+                    self.sudoku.grid = original_grid
+                    return False
+                else:
+                    self.sudoku.grid = original_grid
                     return True
-            else:
-                return False
