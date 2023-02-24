@@ -1,5 +1,5 @@
-from sudoku_generator.sudoku_generator import Sudoku
+from sudoku.sudoku_generator import Sudoku
 
 x = Sudoku(size=4)
-x.generate_grid(seed=55)
+x.generate_grid(seed=50)
 print(x.grid)

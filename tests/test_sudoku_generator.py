@@ -3,7 +3,7 @@ Tests for sudoku generation algorithm
 """
 import pytest
 import numpy as np
-import sudoku_generator.sudoku_generator as sudoku_generator
+import sudoku.sudoku_generator as sudoku_generator
 
 
 @pytest.fixture
