@@ -1,8 +1,18 @@
+"""
+Handles generation of sudoku puzzle.
+"""
+
 import numpy as np
 
 class Sudoku:
-
+    """
+    class for handling sudoku generation.
+    """
     def __init__(self, size):
+        """
+
+        :param size: int, defines size of sudoku grid, i.e. 4 for numbers 1-4, 9 for numbers 1-9 etc.
+        """
         self.total_size = size #size of sudoku = total_size * total_size, can be 2,4,9
         self.grid = np.zeros((self.total_size, self.total_size), dtype=int)
         self.cell_size = int(self.total_size**0.5)
@@ -20,6 +30,11 @@ class Sudoku:
         return np.multiply(self.possible_numbers, self.rollbacked_filter)
 
     def generate_grid(self, seed=50):
+        """
+        Main method for puzzle generation.
+        :param seed: int => seed for numpy random function
+        :return: 2d np array with sudoku values
+        """
         np.random.seed(seed)
         while np.any(self.grid == 0):
             self.randomly_fill_next_position()
@@ -33,6 +48,10 @@ class Sudoku:
                     break
 
     def check_no_options(self):
+        """
+        Check if there are any positions, which do not have any possible number which could be assigned to them.
+        :return:
+        """
         empty_positions = self.grid == 0
         positions_without_options = np.ndarray((self.total_size, self.total_size), dtype=bool)
         for position in np.ndindex(self.get_allowed_numbers().shape[:2]):
@@ -41,6 +60,11 @@ class Sudoku:
         return np.any(empty_without_options)
 
     def rollback_last_random(self):
+        """
+        Loop through selection memory in backwards direction and remove all options, until one which was selected
+        randomly was removed as well.
+        :return:
+        """
         for random_indicator in reversed(self.number_selection_random):
             position = self.number_selection_memory.pop()
             self.number_selection_random.pop()
@@ -53,6 +77,12 @@ class Sudoku:
                 break
 
     def reset_dependent_rollbacks(self, max_position):
+        """
+        When rollback is applied and there are some positions which were previously banned because failed to produce
+        solvable sudoku further in the line, reset these.
+        :param max_position:
+        :return:
+        """
         positions = np.ndindex(self.rollbacked_filter.shape[:2])
         positions_filtered = []
         reverse = reversed(list(positions))
@@ -64,6 +94,10 @@ class Sudoku:
             self.rollbacked_filter[position] = True
 
     def randomly_fill_next_position(self):
+        """
+        Select randomly number which is allowed and put it to sudoku grid.
+        :return:
+        """
         next_position = self.get_next_free_position()
         if not next_position == -1:
             options = np.arange(1, self.total_size+1)
@@ -76,12 +110,21 @@ class Sudoku:
             self.update_options_single_number(next_position, choice)
 
     def get_next_free_position(self):
+        """
+        Return next grid position with no number assigned.
+        :return:
+        """
         for position in np.ndindex(self.grid.shape):
             if self.grid[position] == 0:
                 return position
         return -1
 
     def fill_single_choice(self, position):
+        """
+        Used for positions which have only one possible number.
+        :param position:
+        :return:
+        """
         single_option_value = np.where(self.get_allowed_numbers()[position])[0] + 1
         self.fill_position(position, single_option_value)
         self.number_selection_memory.append(position)
@@ -89,6 +132,10 @@ class Sudoku:
         self.update_options_single_number(position, single_option_value)
 
     def check_next_single_option_position(self):
+        """
+        Scan grid for next position, which has only 1 number available as option.
+        :return: coords (x, y) or -1 if not found
+        """
         for position in np.ndindex(self.get_allowed_numbers().shape[:2]):
             if sum(self.get_allowed_numbers()[position]) == 1 and self.grid[position] == 0:
                 return position
@@ -98,79 +145,50 @@ class Sudoku:
         self.grid[position] = number
 
     def reset_available_options(self):
+        """
+        Re-generate available options based on grid contents
+        :return:
+        """
         self.init_possible_numbers()
         for position in self.number_selection_memory:
             self.update_options_single_number(position, self.grid[position])
 
     def update_options_single_number(self, position, number):
+        """
+        Update possible numbers for positions based on sudoku rules.
+        :param position: tuple(x, y)
+        :param number: int
+        :return:
+        """
         self.update_row(position[0], number)
         self.update_column(position[1], number)
         self.update_cell(position, number)
 
     def update_row(self, row, number):
+        """
+        Update possible numbers based on sudoku rule which allows only one number of a kind in a row.
+        :param row:
+        :param number:
+        :return:
+        """
         self.possible_numbers[row, :, number-1] = False
 
     def update_column(self, column, number):
+        """
+        Update possible numbers based on sudoku rule which allows only one number of a kind in a column.
+        :param column:
+        :param number:
+        :return:
+        """
         self.possible_numbers[:, column, number-1] = False
 
     def update_cell(self, position, number):
+        """
+        Update possible numbers based on sudoku rule which allows only one number of a kind in a cell.
+        :param position:
+        :param number:
+        :return:
+        """
         cell_x = (position[0] // self.cell_size) * self.cell_size
         cell_y = (position[1] // self.cell_size) * self.cell_size
         self.possible_numbers[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size, number-1] = False
-
-    # def check_positions_single_choice(self):
-    #     pass
-    #
-    # def check_no_options_fields(self):
-    #     pass
-    #
-    # def find_position_single_choice(self):
-    #     pass
-    #
-    # def fill_position(self):
-    #     pass
-    #
-    # def rollback_last_random(self):
-    #     pass
-    #
-    # def single_number_fill(self, number):
-    #     for row_number, row in enumerate(self.grid):
-    #         choices = np.arange(0, self.total_size)
-    #         rules_passed = False
-    #         out_of_options = False
-    #         while not rules_passed:
-    #             generated_position = [row_number, np.random.choice(choices)]
-    #             rules_passed = self.check_rules(generated_position, number)
-    #             if rules_passed:
-    #                 self.grid[tuple(generated_position)] = number
-    #             else:
-    #                 choices = np.delete(choices, np.where(choices == generated_position[1]))
-    #                 out_of_options = not choices.any()
-    #         if out_of_options:
-    #             break
-    #
-    # def check_rules(self, position_to_occupy, number):
-    #     column_ok = self.check_column(position_to_occupy[1], number)
-    #     position_ok = self.check_position(position_to_occupy)
-    #     cell_ok = self.check_cell(position_to_occupy, number)
-    #     rules_passed = all([column_ok, position_ok, cell_ok])
-    #     return rules_passed
-    #
-    # def check_position(self, position_to_occupy):
-    #     position_free = self.grid[tuple(position_to_occupy)] == 0
-    #     return position_free
-    #
-    # def check_column(self, column_index, number):
-    #     column = self.grid[:, column_index]
-    #     return not (number in column)
-    #
-    # def check_cell(self, position, number):
-    #     cell_x = (position[0] // self.cell_size) * self.cell_size
-    #     cell_y = (position[1] // self.cell_size) * self.cell_size
-    #     cell = self.grid[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size]
-    #     result = (number in cell)
-    #     return not result
-#
-# x = Sudoku(size=9)
-# x.generate_grid()
-# print(x.grid)
