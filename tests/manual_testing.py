@@ -1,4 +1,3 @@
-from sudoku.sudoku_generator import Sudoku
 from sudoku.sudoku_prepare import SudokuPreparer
 
 # x = Sudoku(size=4)

@@ -46,16 +46,6 @@ class Sudoku:
         self.grid[position] = value
         self.reset_possible_numbers()
 
-    def check_next_single_option_position(self):
-        """
-        Scan grid for next position, which has only 1 number available as option.
-        :return: coords (x, y) or -1 if not found
-        """
-        for position in np.ndindex(self.get_allowed_numbers().shape[:2]):
-            if sum(self.get_allowed_numbers()[position]) == 1 and self.grid[position] == 0:
-                return position
-        return -1
-
     def clean_position(self, position):
         self.grid[position] = 0
         self.reset_possible_numbers()
