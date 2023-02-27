@@ -4,66 +4,63 @@ Tests for sudoku generation algorithm
 import pytest
 import numpy as np
 import sudoku.sudoku_generator as sudoku_generator
+import sudoku.sudoku as sudoku
 
 
 @pytest.fixture
-def sudoku():
-    return sudoku_generator.Sudoku(size=4)
+def generator():
+    return sudoku_generator.SudokuGenerator(size=4)
 
 
-class TestSudoku:
+class TestSudokuGenerator:
 
-    def test_get_allowed_numbers(self, sudoku):
-        sudoku.possible_numbers[0, 0, 0] = False
-        sudoku.rollbacked_filter[1, 1, 1] = False
-        expected = np.ndarray((sudoku.total_size, sudoku.total_size, sudoku.total_size), dtype=bool)
+    def test_get_allowed_numbers(self, generator):
+        generator.possible_numbers[0, 0, 0] = False
+        generator.rollbacked_filter[1, 1, 1] = False
+        expected = np.ndarray((generator.total_size, generator.total_size, generator.total_size), dtype=bool)
         expected.fill(True)
         expected[0, 0, 0] = expected[1, 1, 1] = False
-        assert (sudoku.get_allowed_numbers() == expected).all()
+        assert (generator.get_allowed_numbers() == expected).all()
 
-    def test_check_no_options__false(self, sudoku):
-        assert not sudoku.check_no_options()
+    def test_check_no_options__false(self, sudoku_fixture):
+        assert not sudoku_fixture.check_no_options()
 
-    def test_check_no_options__true(self, sudoku):
-        sudoku.possible_numbers[2, 2, :] = False
-        assert sudoku.check_no_options()
+    def test_check_no_options__true(self, sudoku_fixture):
+        sudoku_fixture.possible_numbers[2, 2, :] = False
+        assert sudoku_fixture.check_no_options()
 
-    def test_generate_grid(self, sudoku):
-        sudoku.generate_grid()
+    def test_generate_grid(self, generator):
+        generator.generate_grid()
         assert False
 
-    def test_randomly_fill_next_position(self, sudoku):
+    def test_randomly_fill_next_position(self, generator):
         np.random.seed(50)
-        sudoku.randomly_fill_next_position()
-        assert sudoku.grid[0, 0] == 1
+        generator.randomly_fill_next_position()
+        assert generator.grid[0, 0] == 1
 
-    def test_get_next_free_position(self, sudoku):
-        sudoku.grid[0, 0] = 1
-        assert sudoku.get_next_free_position() == (0, 1)
+    def test_rollback_last_random(self, generator):
+        generator.number_selection_memory = [(1, 1), (2, 2), (3, 3)]
+        generator.number_selection_random = [True, True, False]
+        generator.rollback_last_random()
+        assert generator.number_selection_memory == [(1, 1)] and generator.number_selection_random == [True]
 
-    def test_rollback_last_random(self, sudoku):
-        sudoku.number_selection_memory = [(1, 1), (2, 2), (3, 3)]
-        sudoku.number_selection_random = [True, True, False]
-        sudoku.rollback_last_random()
-        assert sudoku.number_selection_memory == [(1, 1)] and sudoku.number_selection_random == [True]
+    def test_fill_single_choice(self, generator):
+        generator.possible_numbers[3, 3, :3] = False
+        generator.fill_single_choice((3, 3))
+        assert generator.grid[3, 3] == 4
 
-    def test_fill_single_choice(self, sudoku):
-        sudoku.possible_numbers[3, 3, :3] = False
-        sudoku.fill_single_choice((3, 3))
-        assert sudoku.grid[3, 3] == 4
+    def test_check_next_single_option_position__exists(self, generator):
+        generator.possible_numbers[3, 3, 1:] = False
+        assert generator.check_next_single_option_position() == (3, 3)
 
-    def test_check_next_single_option_position__exists(self, sudoku):
-        sudoku.possible_numbers[3, 3, 1:] = False
-        assert sudoku.check_next_single_option_position() == (3, 3)
+    def test_check_next_single_option_position__none(self, generator):
+        assert generator.check_next_single_option_position() == -1
 
-    def test_check_next_single_option_position__none(self, sudoku):
-        assert sudoku.check_next_single_option_position() == -1
-
-    def test_reset_available_options(self, sudoku):
-        sudoku.grid[1, 1] = 2
-        sudoku.grid[0, 0] = 3
-        sudoku.number_selection_memory = [(0, 0), (1, 1)]
-        sudoku.reset_available_options()
+    def test_reset_available_options(self, generator):
+        generator.grid[1, 1] = 2
+        generator.grid[0, 0] = 3
+        generator.number_selection_memory = [(0, 0), (1, 1)]
+        generator.reset_possible_numbers()
         expected = np.ndarray((4, 4, 4), dtype=bool)
         expected.fill(True)
         expected[0:2, 0:2, 1] = False
@@ -72,34 +69,6 @@ class TestSudoku:
         expected[0:2, 0:2, 2] = False
         expected[:, 0, 2] = False
         expected[0, :, 2] = False
-        assert (sudoku.possible_numbers == expected).all()
+        assert (generator.possible_numbers == expected).all()
 
-    def test_update_options_single_number(self, sudoku):
-        sudoku.update_options_single_number((1, 1), 2)
-        expected = np.ndarray((4, 4, 4), dtype=bool)
-        expected.fill(True)
-        expected[0:2, 0:2, 1] = False
-        expected[:, 1, 1] = False
-        expected[1, :, 1] = False
-        assert (sudoku.possible_numbers == expected).all()
 
-    def test_update_row(self, sudoku):
-        sudoku.update_row(1, 2)
-        expected = np.ndarray((4, 4, 4), dtype=bool)
-        expected.fill(True)
-        expected[1, :, 1] = False
-        assert (sudoku.possible_numbers == expected).all()
-
-    def test_update_column(self, sudoku):
-        sudoku.update_column(1, 2)
-        expected = np.ndarray((4, 4, 4), dtype=bool)
-        expected.fill(True)
-        expected[:, 1, 1] = False
-        assert (sudoku.possible_numbers == expected).all()
-
-    def test_update_cell(self, sudoku):
-        sudoku.update_cell((1, 1), 2)
-        expected = np.ndarray((4, 4, 4), dtype=bool)
-        expected.fill(True)
-        expected[0:2, 0:2, 1] = False
-        assert (sudoku.possible_numbers == expected).all()

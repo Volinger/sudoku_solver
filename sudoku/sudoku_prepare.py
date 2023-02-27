@@ -3,7 +3,7 @@ Handles preparation of sudoku for solving.
 """
 import numpy as np
 
-from sudoku.sudoku_generator import Sudoku
+from sudoku.sudoku_generator import SudokuGenerator
 from enum import IntEnum
 
 class Difficulty(IntEnum):
@@ -18,7 +18,7 @@ class SudokuPreparer:
         self.sudoku = None
         self.available_for_removal = None
         self.removed_all_numbers = False
-        self.sudoku = Sudoku(size)
+        self.sudoku = SudokuGenerator(size)
         self.sudoku.generate_grid(seed)
         self.available_for_removal = np.ndarray((self.sudoku.total_size, self.sudoku.total_size), dtype=bool)
         self.available_for_removal.fill(True)
@@ -81,7 +81,7 @@ class SudokuPreparer:
         Attempt to solve sudoku. Returns True if it is possible to solve it based on implemented solving steps.
         :return:
         """
-        self.sudoku.reset_available_options()
+        self.sudoku.reset_possible_numbers()
         original_grid = self.sudoku.grid.copy()
         while True:
             if (position := self.sudoku.check_next_single_option_position()) != -1:
