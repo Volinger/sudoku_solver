@@ -32,7 +32,11 @@ class TestSudokuGenerator:
 
     def test_generate_grid(self, generator):
         generator.generate_grid()
-        assert False
+        expected = np.asarray([[1, 2, 4, 3],
+                               [4, 3, 2, 1],
+                               [2, 1, 3, 4],
+                               [3, 4, 1, 2]])
+        assert (generator.sudoku.grid == expected).all()
 
     def test_randomly_fill_next_position(self, generator):
         np.random.seed(50)
@@ -56,4 +60,3 @@ class TestSudokuGenerator:
 
     def test_check_next_single_option_position__none(self, generator):
         assert generator.check_next_single_option_position() == -1
-
