@@ -42,17 +42,13 @@ class Sudoku:
         """
         return self.grid[position]
 
-    def update_position(self, position, value):
-        self.grid[position] = value
-        self.reset_possible_numbers()
-
     def clean_position(self, position):
         self.grid[position] = 0
         self.reset_possible_numbers()
 
-    def fill_position(self, position, number):
-        self.grid[position] = number
-        self.update_options_single_number(position, number)
+    def fill_position(self, position, value):
+        self.grid[position] = value
+        self.update_options_single_number(position, value)
 
     def reset_possible_numbers(self):
         """

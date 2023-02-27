@@ -6,6 +6,7 @@ import numpy as np
 from sudoku.sudoku_generator import SudokuGenerator
 from enum import IntEnum
 
+
 class Difficulty(IntEnum):
     easy = 10
     medium = 20
