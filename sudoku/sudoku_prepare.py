@@ -15,12 +15,13 @@ class Difficulty(IntEnum):
 class SudokuPreparer:
 
     def __init__(self, size, seed):
-        self.generator = None
+        self.sudoku = None
         self.available_for_removal = None
         self.removed_all_numbers = False
-        self.generator = SudokuGenerator(size)
-        self.generator.generate_grid(seed)
-        self.available_for_removal = np.ndarray((self.generator.sudoku.get_size(), self.generator.sudoku.get_size()), dtype=bool)
+        generator = SudokuGenerator(size)
+        generator.generate_grid(seed)
+        self.sudoku = generator.get_sudoku()
+        self.available_for_removal = np.ndarray((self.sudoku.get_size(), self.sudoku.get_size()), dtype=bool)
         self.available_for_removal.fill(True)
 
     def prepare(self, difficulty):
@@ -30,7 +31,7 @@ class SudokuPreparer:
         :return:
         """
         self.remove_numbers(difficulty)
-        return self.generator.sudoku.grid
+        return self.sudoku.grid
 
     def remove_numbers(self, difficulty: Difficulty):
         """
@@ -56,21 +57,21 @@ class SudokuPreparer:
         """
         while True:
             random_position = self.select_random_filled_position()
-            previous_value = self.generator.sudoku.grid[random_position]
-            self.generator.sudoku.grid[random_position] = 0
+            previous_value = self.sudoku.grid[random_position]
+            self.sudoku.grid[random_position] = 0
             solvable = self.check_solvable()
             self.available_for_removal[random_position] = False
             if solvable:
                 return True
             elif self.available_for_removal.any():
-                self.generator.sudoku.grid[random_position] = previous_value
+                self.sudoku.grid[random_position] = previous_value
                 continue
             else:
-                self.generator.sudoku.grid[random_position] = previous_value
+                self.sudoku.grid[random_position] = previous_value
                 return False
 
     def select_random_filled_position(self):
-        nonzero_indices = np.nonzero(self.generator.sudoku.grid)
+        nonzero_indices = np.nonzero(self.sudoku.grid)
         nonzero_positions = np.array(list(zip(nonzero_indices[0], nonzero_indices[1])))
         random_index = np.random.choice(len(nonzero_positions))
         random_position = tuple(nonzero_positions[random_index])
@@ -81,15 +82,16 @@ class SudokuPreparer:
         Attempt to solve sudoku. Returns True if it is possible to solve it based on implemented solving steps.
         :return:
         """
-        self.generator.sudoku.reset_possible_numbers()
-        original_grid = self.generator.sudoku.grid.copy()
+        self.sudoku.reset_possible_numbers()
+        original_grid = self.sudoku.grid.copy()
         while True:
-            if (position := self.generator.check_next_single_option_position()) != -1:
-                self.generator.fill_single_choice(position)
-            elif self.generator.check_next_single_option_position() == -1:
-                if (self.generator.sudoku.grid == 0).any():
-                    self.generator.sudoku.grid = original_grid
+            if (position := self.sudoku.check_next_single_option_position()) != -1:
+                single_option_value = np.where(self.sudoku.possible_numbers[position])[0] + 1
+                self.sudoku.fill_position(position, single_option_value)
+            elif self.sudoku.check_next_single_option_position() == -1:
+                if (self.sudoku.grid == 0).any():
+                    self.sudoku.grid = original_grid
                     return False
                 else:
-                    self.generator.sudoku.grid = original_grid
+                    self.sudoku.grid = original_grid
                     return True

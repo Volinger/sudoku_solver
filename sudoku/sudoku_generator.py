@@ -56,6 +56,9 @@ class SudokuGenerator:
                 else:
                     break
 
+    def get_sudoku(self):
+        return self.sudoku
+
     def check_no_options(self):
         """
         Check if there are any positions, which do not have any allowed number which could be assigned to them.

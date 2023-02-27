@@ -19,12 +19,10 @@ class TestSudokuPreparer:
         assert sudoku_preparer.remove_random_number()
 
     def test_check_solvable__true(self, sudoku_preparer):
-        sudoku_preparer.generator.sudoku.grid[0, 1] = 0
+        sudoku_preparer.sudoku.grid[0, 1] = 0
         assert sudoku_preparer.check_solvable()
 
     def test_check_solvable__false(self, sudoku_preparer):
-        sudoku_preparer.generator.sudoku.grid = np.zeros((4, 4))
-        sudoku_preparer.generator.sudoku.possible_numbers.fill(True)
-        sudoku_preparer.generator.rollbacked_filter.fill(True)
-        sudoku_preparer.generator.number_selection_memory = []
+        sudoku_preparer.sudoku.grid = np.zeros((4, 4))
+        sudoku_preparer.sudoku.possible_numbers.fill(True)
         assert not sudoku_preparer.check_solvable()

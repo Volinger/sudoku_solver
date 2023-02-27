@@ -103,3 +103,13 @@ class Sudoku:
         cell_x = (position[0] // self.cell_size) * self.cell_size
         cell_y = (position[1] // self.cell_size) * self.cell_size
         self.possible_numbers[cell_x:cell_x + self.cell_size, cell_y:cell_y + self.cell_size, number-1] = False
+
+    def check_next_single_option_position(self):
+        """
+        Scan grid for next position, which has only 1 number possible as option.
+        :return: coords (x, y) or -1 if not found
+        """
+        for position in np.ndindex(self.possible_numbers.shape[:2]):
+            if sum(self.possible_numbers[position]) == 1 and self.get_position(position) == 0:
+                return position
+        return -1
