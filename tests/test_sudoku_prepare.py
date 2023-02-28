@@ -13,7 +13,8 @@ class TestSudokuPreparer:
 
     def test_prepare(self, sudoku_preparer):
         expected = [[1, 2, 0, 3], [0, 0, 0, 0], [0, 0, 0, 0], [3, 0, 0, 2]]
-        assert (sudoku_preparer.prepare(15) == expected).all()
+        sudoku_preparer.prepare(15)
+        assert (sudoku_preparer.sudoku.grid == expected).all()
 
     def test_remove_random_number(self, sudoku_preparer):
         assert sudoku_preparer.remove_random_number()

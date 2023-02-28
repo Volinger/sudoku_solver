@@ -32,7 +32,7 @@ class SudokuPreparer:
         :return:
         """
         self.remove_numbers(difficulty)
-        return self.sudoku.grid
+        return self.sudoku
 
     def remove_numbers(self, difficulty: Difficulty):
         """

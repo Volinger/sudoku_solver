@@ -11,6 +11,9 @@ class Sudoku:
         self.cell_size = int(self.total_size ** 0.5)
         self.init_possible_numbers()
 
+    def __str__(self):
+        return str(self.grid)
+
     def init_possible_numbers(self):
         self.possible_numbers = np.ndarray((self.total_size, self.total_size, self.total_size), dtype=bool)
         self.possible_numbers.fill(True)
