@@ -49,6 +49,14 @@ class TestSudokuGenerator:
         generator.rollback_last_random()
         assert generator.number_selection_memory == [(1, 1)] and generator.number_selection_random == [True]
 
+    def test_reset_dependent_rollbacks(self, generator):
+        generator.generate_grid()
+        np.put(generator.rollbacked_filter, [(1, 3), (2, 0), (2, 1)], [False, False, False, False])
+        expected = generator.rollbacked_filter.copy()
+        generator.reset_dependent_rollbacks((2, 0))
+        expected[2, 1] = [True, True, True, True]
+        assert (generator.rollbacked_filter == expected).all()
+
     def test_fill_single_choice(self, generator):
         generator.sudoku.possible_numbers[3, 3, :3] = False
         generator.fill_single_choice((3, 3))

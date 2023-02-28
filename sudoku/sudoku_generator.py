@@ -42,7 +42,6 @@ class SudokuGenerator:
             while True:
                 if self.check_no_options():
                     self.rollback_last_random()
-                    break
                 elif (position := self.check_next_single_option_position()) != -1:
                     self.fill_single_choice(position)
                 else:
@@ -75,11 +74,14 @@ class SudokuGenerator:
             previous_value = self.sudoku.get_position(last_random_position)
             self.sudoku.clean_position(position=last_random_position)
             if random_indicator:
-                self.rollbacked_filter[last_random_position, previous_value] = False
+                rollback_index = list(last_random_position)
+                rollback_index.insert(2, previous_value-1)
+                rollback_index = tuple(rollback_index)
+                self.rollbacked_filter[rollback_index] = False
                 self.reset_dependent_rollbacks(last_random_position)
                 break
 
-    def reset_dependent_rollbacks(self, max_position):
+    def reset_dependent_rollbacks(self, rollbacked_position):
         """
         When rollback is applied and there are some positions which were previously banned because they failed to
         produce solvable sudoku further in the line, reset them.
@@ -89,7 +91,7 @@ class SudokuGenerator:
         positions = np.ndindex(self.rollbacked_filter.shape[:2])
         positions_filtered = []
         for position in reversed(list(positions)):
-            if position == max_position:
+            if position == rollbacked_position:
                 break
             positions_filtered.append(position)
         for position in positions_filtered:
