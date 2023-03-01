@@ -4,6 +4,12 @@ Tests for sudoku generation algorithm
 import pytest
 import numpy as np
 import sudoku.sudoku as sudoku
+import sudoku.sudoku_generator as sudoku_generator
+
+
+@pytest.fixture
+def generator():
+    return sudoku_generator.SudokuGenerator(size=4)
 
 
 @pytest.fixture
@@ -61,3 +67,13 @@ class TestSudoku:
         expected[:, 0, 2] = False
         expected[0, :, 2] = False
         assert (sudoku_fixture.possible_numbers == expected).all()
+
+    def test_check_solvable__true(self, generator):
+        generator.generate_grid(50)
+        generator.sudoku.grid[0, 1] = 0
+        assert generator.sudoku.check_solvable()
+
+    def test_check_solvable__false(self, sudoku_fixture):
+        sudoku_fixture.grid = np.zeros((4, 4))
+        sudoku_fixture.possible_numbers.fill(True)
+        assert not sudoku_fixture.check_solvable()

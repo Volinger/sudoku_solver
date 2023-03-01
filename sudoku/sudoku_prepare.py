@@ -60,7 +60,7 @@ class SudokuPreparer:
             random_position = self.select_random_filled_position()
             previous_value = self.sudoku.grid[random_position]
             self.sudoku.grid[random_position] = 0
-            solvable = self.check_solvable()
+            solvable = self.sudoku.check_solvable()
             self.available_for_removal[random_position] = False
             if solvable:
                 return True
@@ -78,21 +78,3 @@ class SudokuPreparer:
         random_position = tuple(nonzero_positions[random_index])
         return random_position
 
-    def check_solvable(self):
-        """
-        Attempt to solve sudoku. Returns True if it is possible to solve it based on implemented solving steps.
-        :return:
-        """
-        self.sudoku.reset_possible_numbers()
-        original_grid = self.sudoku.grid.copy()
-        while True:
-            if (position := self.sudoku.check_next_single_option_position()) != -1:
-                single_option_value = np.where(self.sudoku.possible_numbers[position])[0] + 1
-                self.sudoku.fill_position(position, single_option_value)
-            elif self.sudoku.check_next_single_option_position() == -1:
-                if (self.sudoku.grid == 0).any():
-                    self.sudoku.grid = original_grid
-                    return False
-                else:
-                    self.sudoku.grid = original_grid
-                    return True

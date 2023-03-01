@@ -112,3 +112,22 @@ class Sudoku:
             if sum(self.possible_numbers[position]) == 1 and self.get_position(position) == 0:
                 return position
         return -1
+
+    def check_solvable(self):
+        """
+        Attempt to solve sudoku. Returns True if it is possible to solve it based on implemented solving steps.
+        :return:
+        """
+        self.reset_possible_numbers()
+        original_grid = self.grid.copy()
+        while True:
+            if (position := self.check_next_single_option_position()) != -1:
+                single_option_value = np.where(self.possible_numbers[position])[0] + 1
+                self.fill_position(position, single_option_value)
+            elif self.check_next_single_option_position() == -1:
+                if (self.grid == 0).any():
+                    self.grid = original_grid
+                    return False
+                else:
+                    self.grid = original_grid
+                    return True
