@@ -8,3 +8,7 @@ from sudoku.sudoku_generator import SudokuGenerator
 prep = SudokuPreparer(size=9, seed=0)
 sudoku = prep.prepare(difficulty=70)
 print(sudoku)
+
+sudoku.solve()
+
+print(sudoku)

@@ -118,13 +118,14 @@ class Sudoku:
         Attempt to solve sudoku. Returns True if it is possible to solve it based on implemented solving steps.
         :return:
         """
-        self.reset_possible_numbers()
         original_grid = self.grid.copy()
         solvable = self.solve()
         self.grid = original_grid
+        self.reset_possible_numbers()
         return solvable
 
     def solve(self):
+        self.reset_possible_numbers()
         while True:
             if (position := self.check_next_single_option_position()) != -1:
                 single_option_value = np.where(self.possible_numbers[position])[0] + 1
