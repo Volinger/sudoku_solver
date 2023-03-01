@@ -120,14 +120,14 @@ class Sudoku:
         """
         self.reset_possible_numbers()
         original_grid = self.grid.copy()
+        solvable = self.solve()
+        self.grid = original_grid
+        return solvable
+
+    def solve(self):
         while True:
             if (position := self.check_next_single_option_position()) != -1:
                 single_option_value = np.where(self.possible_numbers[position])[0] + 1
                 self.fill_position(position, single_option_value)
             elif self.check_next_single_option_position() == -1:
-                if (self.grid == 0).any():
-                    self.grid = original_grid
-                    return False
-                else:
-                    self.grid = original_grid
-                    return True
+                return not (self.grid == 0).any()
