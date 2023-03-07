@@ -38,7 +38,7 @@ class SudokuHandler:
 		return sudoku grid
 		:return:
 		"""
-		return self.completed_grid.grid
+		return self.completed_grid
 
 	def reset(self):
 		"""

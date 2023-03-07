@@ -1,6 +1,7 @@
-from sudoku.sudoku_handler import SudokuHandler
+import sudoku
 
-handler = SudokuHandler()
+
+handler = sudoku.SudokuHandler()
 handler.generate(size=3)
 handler.prepare_for_solving(difficulty=3)
 sudoku = handler.sudoku
