@@ -1,14 +1,6 @@
-from sudoku.sudoku_prepare import SudokuPreparer
-from sudoku.sudoku_generator import SudokuGenerator
+from sudoku.sudoku_handler import SudokuHandler
 
-# x = SudokuGenerator(size=16)
-# x.generate_grid(seed=0)
-# print(x.sudoku.grid)
-
-prep = SudokuPreparer(size=9, seed=0)
-sudoku = prep.prepare(difficulty=70)
-print(sudoku)
-
-sudoku.solve()
-
+handler = SudokuHandler()
+handler.generate(size=3)
+sudoku = handler.get_grid()
 print(sudoku)

@@ -3,42 +3,46 @@ Handles sudoku operations
 """
 
 from sudoku.sudoku import Sudoku
+from sudoku.sudoku_prepare import SudokuPreparer
+from sudoku.sudoku_generator import SudokuGenerator
 
 
 class SudokuHandler:
 
 	def __init__(self):
-		self.sudoku = Sudoku()
+		self.completed_sudoku = None
+		self.prepared_sudoku = None
+		self.user_grid = None
 
-	def generate(self):
+	def generate(self, size):
 		"""
 		generate sudoku object
 		:return:
 		"""
-		pass
+		generator = SudokuGenerator(size=size)
+		generator.generate_grid()
+		self.completed_sudoku = generator.sudoku
 
-	def prepare_for_solving(self):
+	def prepare_for_solving(self, difficulty):
 		"""
 		prepare sudoku so it can be solved
 		:return:
 		"""
-		pass
+		preparer = SudokuPreparer()
+		self.prepared_sudoku = preparer.prepare(difficulty)
+		self.user_grid = self.sudoku.grid
 
 	def solve(self):
-		"""
-		solve sudoku in a given state if possoble
-		:return:
-		"""
-		pass
+		self.sudoku.solve()
 
 	def get_grid(self):
 		"""
 		return sudoku grid
 		:return:
 		"""
-		pass
+		return self.completed_sudoku.grid
 
-	def single(self):
+	def solve_single(self):
 		"""
 		solves single position if possible
 		:return:
@@ -50,25 +54,27 @@ class SudokuHandler:
 		resets sudoku to original state before user stared solving
 		:return:
 		"""
-		pass
+		self.user_grid = self.sudoku.grid
 
-	def put_user_number(self):
+	def put_user_number(self, position, number):
 		"""
 		puts number by the user into grid
 		:return:
 		"""
+		self.user_grid[position] = number
 		pass
 
-	def revert_user_number(self):
-		"""
-		reverts number previously filled by the user
-		:return:
-		"""
-		pass
-
-	def check_user_number(self):
+	def check_user_position(self, position):
 		"""
 		checks if number put by user is correct
 		:return:
 		"""
-		pass
+		return self.sudoku.grid[position] == self.user_grid[position]
+
+	def to_file(self, file):
+		"""
+		Writes generated sudoku to file
+		:return:
+		"""
+		with open(file) as f:
+			f.write(self.completed_sudoku)
