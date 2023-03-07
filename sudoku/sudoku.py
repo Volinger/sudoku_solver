@@ -7,7 +7,7 @@ class Sudoku:
         :param size: int, defines size of sudoku grid, i.e. 4 for numbers 1-4, 9 for numbers 1-9 etc.
         """
         self.total_size = size  # size of sudoku = total_size * total_size, can be 4,9,16...
-        self.grid = np.zeros((self.total_size, self.total_size), dtype=int)
+        self.grid = np.zeros((self.total_size, ) * 2, dtype=int)
         self.cell_size = int(self.total_size ** 0.5)
         self.init_possible_numbers()
 
@@ -15,7 +15,7 @@ class Sudoku:
         return str(self.grid)
 
     def init_possible_numbers(self):
-        self.possible_numbers = np.ndarray((self.total_size, self.total_size, self.total_size), dtype=bool)
+        self.possible_numbers = np.ndarray((self.total_size, ) * 3, dtype=bool)
         self.possible_numbers.fill(True)
 
     def get_next_free_position(self):

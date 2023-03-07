@@ -22,7 +22,7 @@ class SudokuPreparer:
         generator = SudokuGenerator(size)
         generator.generate_grid(seed)
         self.sudoku = generator.get_sudoku()
-        self.available_for_removal = np.ndarray((self.sudoku.get_size(), self.sudoku.get_size()), dtype=bool)
+        self.available_for_removal = np.ndarray((self.sudoku.get_size(), ) * 2, dtype=bool)
         self.available_for_removal.fill(True)
 
     def prepare(self, difficulty):

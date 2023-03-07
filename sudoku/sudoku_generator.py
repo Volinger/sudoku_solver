@@ -18,8 +18,7 @@ class SudokuGenerator:
         self.sudoku = sudoku.Sudoku(size=size)
         self.number_selection_memory = []
         self.number_selection_random = []
-        self.rollbacked_filter = np.ndarray((self.sudoku.get_size(), self.sudoku.get_size(), self.sudoku.get_size()),
-                                            dtype=bool)
+        self.rollbacked_filter = np.ndarray((self.sudoku.get_size(), ) * 3, dtype=bool)
         self.rollbacked_filter.fill(True)
 
     def get_allowed_numbers(self):
@@ -56,7 +55,7 @@ class SudokuGenerator:
         :return:
         """
         empty_positions = self.sudoku.get_empty_positions()
-        positions_without_options = np.ndarray((self.sudoku.get_size(), self.sudoku.get_size()), dtype=bool)
+        positions_without_options = np.ndarray((self.sudoku.get_size(), ) * 2, dtype=bool)
         for position in np.ndindex(self.get_allowed_numbers().shape[:2]):
             positions_without_options[position] = not any(self.get_allowed_numbers()[position])
         empty_without_options = np.logical_and(empty_positions, positions_without_options)
