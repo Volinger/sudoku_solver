@@ -32,15 +32,6 @@ class SudokuHandler:
 		self.prepared_sudoku = preparer.prepare(difficulty)
 		self.user_grid = self.prepared_sudoku.grid
 
-	def solve(self):
-		"""
-		Solve sudoku from loaded grid. Returns solved sudoku.
-		:return:
-		"""
-		sudoku = Sudoku.from_grid()
-		sudoku.solve()
-		return sudoku.grid
-
 	def get_grid(self):
 		"""
 		return sudoku grid

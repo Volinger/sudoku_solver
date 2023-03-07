@@ -3,17 +3,39 @@ from sudoku.sudoku_generator import SudokuGenerator
 
 
 class Sudoku:
-    def __init__(self, size):
+    def __init__(self):
         """
+        :param
+        """
+        self.total_size = None  # size of sudoku = total_size * total_size, can be 4,9,16...
+        self.grid = None
+        self.cell_size = None
+        self.possible_numbers = None
+
+    def __str__(self):
+        return str(self.grid)
+
+    def init(self, size):
+        """
+        Init sudoku object based on size parameter
         :param size: int, defines size of sudoku grid, i.e. 4 for numbers 1-4, 9 for numbers 1-9 etc.
+        :return:
         """
         self.total_size = size  # size of sudoku = total_size * total_size, can be 4,9,16...
         self.grid = np.zeros((self.total_size, ) * 2, dtype=int)
         self.cell_size = int(self.total_size ** 0.5)
         self.init_possible_numbers()
 
-    def __str__(self):
-        return str(self.grid)
+    def from_grid(self, grid):
+        """
+        Alternative initialization, which uses supplied sudoku grid.
+        :param grid:
+        :return:
+        """
+        self.grid = np.asarray(grid)
+        self.total_size = len(grid[0])
+        self.cell_size = int(self.total_size ** 0.5)
+        self.reset_possible_numbers()
 
     def init_possible_numbers(self):
         self.possible_numbers = np.ndarray((self.total_size, ) * 3, dtype=bool)

@@ -14,7 +14,9 @@ def generator():
 
 @pytest.fixture
 def sudoku_fixture():
-    return sudoku.Sudoku(size=4)
+    sudoku_object = sudoku.Sudoku()
+    sudoku_object.init(4)
+    return sudoku_object
 
 
 class TestSudoku:
@@ -84,3 +86,8 @@ class TestSudoku:
         sudoku_fixture.solve()
         expected = np.asarray([[1, 2, 4, 3], [4, 3, 2, 1], [2, 1, 3, 4], [3, 4, 1, 2]])
         assert (sudoku_fixture.grid == expected).all()
+
+    def test_from_grid(self):
+        sudoku_object = sudoku.Sudoku()
+        sudoku_object.from_grid([[1, 2, 0, 3], [0, 0, 0, 0], [0, 0, 0, 0], [3, 0, 0, 2]])
+        assert sudoku_object.total_size == 4

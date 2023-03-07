@@ -15,7 +15,8 @@ class SudokuGenerator:
 
         :param size: int, defines size of sudoku grid, i.e. 4 for numbers 1-4, 9 for numbers 1-9 etc.
         """
-        self.sudoku = sudoku.Sudoku(size=size)
+        self.sudoku = sudoku.Sudoku()
+        self.sudoku.init(size=size)
         self.number_selection_memory = []
         self.number_selection_random = []
         self.rollbacked_filter = np.ndarray((self.sudoku.get_size(), ) * 3, dtype=bool)
