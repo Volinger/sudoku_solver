@@ -1,7 +1,8 @@
 import pytest
 import numpy as np
 import sudoku.sudoku_handler as sudoku_handler
-
+import sudoku.sudoku_generator as sudoku_generator
+import sudoku.sudoku_prepare as sudoku_prepare
 
 @pytest.fixture
 def handler():
@@ -38,11 +39,18 @@ class TestSudokuHandler:
 		handler.put_user_number(position=[0, 1], number=5)
 		assert handler.user_grid[0, 1] == 5
 
-	def test_reset(self):
-		assert False
+	def test_reset(self, handler):
+		handler.generate(size=4)
+		handler.prepare_for_solving(difficulty=10)
+		handler.user_grid[0, 1] = 999
+		handler.reset()
+		assert (handler.user_grid == handler.sudoku.grid).all()
 
-	def test_solve_grid(self):
-		assert False
-
-	def test_solve_single(self):
-		assert False
+	def test_solve_grid(self, handler):
+		generator = sudoku_generator.SudokuGenerator(size=4)
+		generator.generate_grid()
+		grid = generator.sudoku.grid
+		preparer = sudoku_prepare.SudokuPreparer(sudoku=generator.sudoku)
+		preparer.prepare(difficulty=15)
+		handler.solve_grid(preparer.sudoku.grid)
+		assert (handler.completed_grid == grid).all()

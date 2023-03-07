@@ -40,13 +40,6 @@ class SudokuHandler:
 		"""
 		return self.completed_grid.grid
 
-	def solve_single(self):
-		"""
-		solves single position if possible
-		:return:
-		"""
-		pass
-
 	def reset(self):
 		"""
 		resets sudoku to original state before user stared solving

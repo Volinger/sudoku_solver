@@ -4,7 +4,6 @@ Tests for sudoku generation algorithm
 import pytest
 import numpy as np
 import sudoku.sudoku_generator as sudoku_generator
-import sudoku.sudoku as sudoku
 
 
 @pytest.fixture
