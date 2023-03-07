@@ -3,7 +3,7 @@ Handles generation of sudoku puzzle.
 """
 
 import numpy as np
-import sudoku.sudoku as sudoku
+import sudoku.sudoku_core as sudoku_core
 
 
 class SudokuGenerator:
@@ -15,7 +15,7 @@ class SudokuGenerator:
 
         :param size: int, defines size of sudoku grid, i.e. 4 for numbers 1-4, 9 for numbers 1-9 etc.
         """
-        self.sudoku = sudoku.Sudoku()
+        self.sudoku = sudoku_core.SudokuCore()
         self.sudoku.init(size=size)
         self.number_selection_memory = []
         self.number_selection_random = []

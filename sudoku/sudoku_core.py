@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class Sudoku:
+class SudokuCore:
     def __init__(self):
         """
         :param

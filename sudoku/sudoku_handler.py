@@ -2,7 +2,7 @@
 Sudoku API
 """
 
-from sudoku.sudoku import Sudoku
+from sudoku.sudoku_core import SudokuCore
 from sudoku.sudoku_prepare import SudokuPreparer
 from sudoku.sudoku_generator import SudokuGenerator
 
@@ -67,7 +67,7 @@ class SudokuHandler:
 		Creates sudoku object from supplied grid and solves it if possible.
 		:return:
 		"""
-		sudoku = Sudoku()
+		sudoku = SudokuCore()
 		sudoku.from_grid(grid)
 		sudoku.solve()
 		self.completed_grid = sudoku.grid

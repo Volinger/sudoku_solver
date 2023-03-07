@@ -3,7 +3,7 @@ Tests for sudoku generation algorithm
 """
 import pytest
 import numpy as np
-import sudoku.sudoku as sudoku
+import sudoku.sudoku_core as sudoku_core
 import sudoku.sudoku_generator as sudoku_generator
 
 
@@ -14,7 +14,7 @@ def generator():
 
 @pytest.fixture
 def sudoku_fixture():
-    sudoku_object = sudoku.Sudoku()
+    sudoku_object = sudoku_core.SudokuCore()
     sudoku_object.init(4)
     return sudoku_object
 
@@ -88,6 +88,6 @@ class TestSudoku:
         assert (sudoku_fixture.grid == expected).all()
 
     def test_from_grid(self):
-        sudoku_object = sudoku.Sudoku()
+        sudoku_object = sudoku_core.SudokuCore()
         sudoku_object.from_grid([[1, 2, 0, 3], [0, 0, 0, 0], [0, 0, 0, 0], [3, 0, 0, 2]])
         assert sudoku_object.total_size == 4
