@@ -1,5 +1,5 @@
 """
-Handles sudoku operations
+Sudoku API
 """
 
 from sudoku.sudoku import Sudoku
@@ -23,17 +23,23 @@ class SudokuHandler:
 		generator.generate_grid()
 		self.completed_sudoku = generator.sudoku
 
-	def prepare_for_solving(self, difficulty):
+	def prepare_for_solving(self, size, difficulty):
 		"""
 		prepare sudoku so it can be solved
 		:return:
 		"""
-		preparer = SudokuPreparer()
+		preparer = SudokuPreparer(size=size, seed=50)
 		self.prepared_sudoku = preparer.prepare(difficulty)
-		self.user_grid = self.sudoku.grid
+		self.user_grid = self.prepared_sudoku.grid
 
 	def solve(self):
-		self.sudoku.solve()
+		"""
+		Solve sudoku from loaded grid. Returns solved sudoku.
+		:return:
+		"""
+		sudoku = Sudoku.from_grid()
+		sudoku.solve()
+		return sudoku.grid
 
 	def get_grid(self):
 		"""
@@ -71,10 +77,19 @@ class SudokuHandler:
 		"""
 		return self.sudoku.grid[position] == self.user_grid[position]
 
-	def to_file(self, file):
+	def solve_grid(self, grid):
 		"""
-		Writes generated sudoku to file
+		Creates sudoku object from supplied grid and solves it if possible.
 		:return:
 		"""
-		with open(file) as f:
-			f.write(self.completed_sudoku)
+		sudoku = Sudoku()
+		sudoku.from_grid(grid)
+		sudoku.solve()
+		self.completed_sudoku = sudoku.grid
+
+	def get_result(self):
+		"""
+		Get completed solution of sudoku.
+		:return:
+		"""
+		return self.completed_sudoku
