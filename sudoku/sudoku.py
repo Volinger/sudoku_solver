@@ -1,5 +1,4 @@
 import numpy as np
-from sudoku.sudoku_generator import SudokuGenerator
 
 
 class Sudoku:

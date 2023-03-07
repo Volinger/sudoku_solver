@@ -10,8 +10,8 @@ from sudoku.sudoku_generator import SudokuGenerator
 class SudokuHandler:
 
 	def __init__(self):
-		self.completed_sudoku = None
-		self.prepared_sudoku = None
+		self.completed_grid = None
+		self.sudoku = None
 		self.user_grid = None
 
 	def generate(self, size):
@@ -21,23 +21,24 @@ class SudokuHandler:
 		"""
 		generator = SudokuGenerator(size=size)
 		generator.generate_grid()
-		self.completed_sudoku = generator.sudoku
+		self.sudoku = generator.sudoku
+		self.completed_grid = generator.sudoku.grid
 
-	def prepare_for_solving(self, size, difficulty):
+	def prepare_for_solving(self, difficulty):
 		"""
 		prepare sudoku so it can be solved
 		:return:
 		"""
-		preparer = SudokuPreparer(size=size, seed=50)
-		self.prepared_sudoku = preparer.prepare(difficulty)
-		self.user_grid = self.prepared_sudoku.grid
+		preparer = SudokuPreparer(sudoku=self.sudoku)
+		self.sudoku = preparer.prepare(difficulty=difficulty)
+		self.user_grid = self.sudoku.grid
 
 	def get_grid(self):
 		"""
 		return sudoku grid
 		:return:
 		"""
-		return self.completed_sudoku.grid
+		return self.completed_grid.grid
 
 	def solve_single(self):
 		"""
@@ -66,7 +67,7 @@ class SudokuHandler:
 		checks if number put by user is correct
 		:return:
 		"""
-		return self.sudoku.grid[position] == self.user_grid[position]
+		return self.completed_grid[position] == self.user_grid[position]
 
 	def solve_grid(self, grid):
 		"""
@@ -76,11 +77,4 @@ class SudokuHandler:
 		sudoku = Sudoku()
 		sudoku.from_grid(grid)
 		sudoku.solve()
-		self.completed_sudoku = sudoku.grid
-
-	def get_result(self):
-		"""
-		Get completed solution of sudoku.
-		:return:
-		"""
-		return self.completed_sudoku
+		self.completed_grid = sudoku.grid

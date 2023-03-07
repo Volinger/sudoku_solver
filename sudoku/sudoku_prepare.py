@@ -2,8 +2,6 @@
 Handles preparation of sudoku for solving.
 """
 import numpy as np
-
-from sudoku.sudoku_generator import SudokuGenerator
 from enum import IntEnum
 
 
@@ -15,13 +13,11 @@ class Difficulty(IntEnum):
 
 class SudokuPreparer:
 
-    def __init__(self, size, seed):
+    def __init__(self, sudoku):
         self.sudoku = None
         self.available_for_removal = None
         self.removed_all_numbers = False
-        generator = SudokuGenerator(size)
-        generator.generate_grid(seed)
-        self.sudoku = generator.get_sudoku()
+        self.sudoku = sudoku
         self.available_for_removal = np.ndarray((self.sudoku.get_size(), ) * 2, dtype=bool)
         self.available_for_removal.fill(True)
 

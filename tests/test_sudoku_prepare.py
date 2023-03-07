@@ -1,12 +1,15 @@
 import numpy as np
 import pytest
-import numpy
 import sudoku.sudoku_prepare as sudoku_prepare
+import sudoku.sudoku_generator as sudoku_generator
 
 
 @pytest.fixture
 def sudoku_preparer():
-    return sudoku_prepare.SudokuPreparer(size=4, seed=50)
+    generator = sudoku_generator.SudokuGenerator(size=4)
+    generator.generate_grid()
+    prepared = sudoku_prepare.SudokuPreparer(sudoku=generator.sudoku)
+    return prepared
 
 
 class TestSudokuPreparer:
@@ -16,5 +19,5 @@ class TestSudokuPreparer:
         sudoku_preparer.prepare(15)
         assert (sudoku_preparer.sudoku.grid == expected).all()
 
-    def test_remove_random_number(self, sudoku_preparer):
+    def test_remove_random_number(self,  sudoku_preparer):
         assert sudoku_preparer.remove_random_number()
