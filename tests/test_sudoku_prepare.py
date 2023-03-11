@@ -7,7 +7,7 @@ import sudoku.sudoku_generator as sudoku_generator
 @pytest.fixture
 def sudoku_preparer():
     generator = sudoku_generator.SudokuGenerator(size=4)
-    generator.generate_grid()
+    generator.generate_grid(seed=50)
     prepared = sudoku_prepare.SudokuPreparer(sudoku=generator.sudoku)
     return prepared
 

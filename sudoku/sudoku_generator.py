@@ -30,13 +30,14 @@ class SudokuGenerator:
         """
         return np.multiply(self.sudoku.possible_numbers, self.rollbacked_filter)
 
-    def generate_grid(self, seed=50):
+    def generate_grid(self, seed=None):
         """
         Main method for puzzle generation.
-        :param seed: int => seed for numpy random function
+        :param seed: int => seed for numpy random function.
         :return: 2d np array with sudoku values
         """
-        np.random.seed(seed)
+        if seed is not None:
+            np.random.seed(seed)
         while self.sudoku.any_free_position():
             self.randomly_fill_next_position()
             while True:

@@ -14,13 +14,13 @@ class SudokuHandler:
 		self.sudoku = None
 		self.user_grid = None
 
-	def generate(self, size):
+	def generate(self, size, seed=None):
 		"""
 		generate sudoku object
 		:return:
 		"""
 		generator = SudokuGenerator(size=size)
-		generator.generate_grid()
+		generator.generate_grid(seed=seed)
 		self.sudoku = generator.sudoku
 		self.completed_grid = generator.sudoku.grid
 

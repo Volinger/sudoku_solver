@@ -12,7 +12,7 @@ def handler():
 class TestSudokuHandler:
 
 	def test_check_user_position(self, handler):
-		handler.generate(size=4)
+		handler.generate(size=4, seed=50)
 		handler.prepare_for_solving(difficulty=15)
 		handler.user_grid[0, 2] = 4
 		match = handler.check_user_position((0, 2))
@@ -20,7 +20,7 @@ class TestSudokuHandler:
 		assert match and not mismatch
 
 	def test_generate(self, handler):
-		handler.generate(size=4)
+		handler.generate(size=4, seed=50)
 		expected = np.asarray([[1, 2, 4, 3],
 							   [4, 3, 2, 1],
 							   [2, 1, 3, 4],
@@ -28,7 +28,7 @@ class TestSudokuHandler:
 		assert (expected == handler.completed_grid).all()
 
 	def test_prepare_for_solving(self, handler):
-		handler.generate(size=4)
+		handler.generate(size=4, seed=50)
 		handler.prepare_for_solving(difficulty=15)
 		expected = [[1, 2, 0, 3], [0, 0, 0, 0], [0, 0, 0, 0], [3, 0, 0, 2]]
 		assert (expected == handler.sudoku.grid).all()

@@ -30,7 +30,7 @@ class TestSudokuGenerator:
         assert generator.check_no_options()
 
     def test_generate_grid(self, generator):
-        generator.generate_grid()
+        generator.generate_grid(seed=50)
         expected = np.asarray([[1, 2, 4, 3],
                                [4, 3, 2, 1],
                                [2, 1, 3, 4],
@@ -49,7 +49,7 @@ class TestSudokuGenerator:
         assert generator.number_selection_memory == [(1, 1)] and generator.number_selection_random == [True]
 
     def test_reset_dependent_rollbacks(self, generator):
-        generator.generate_grid()
+        generator.generate_grid(seed=50)
         np.put(generator.rollbacked_filter, [(1, 3), (2, 0), (2, 1)], [False, False, False, False])
         expected = generator.rollbacked_filter.copy()
         generator.reset_dependent_rollbacks((2, 0))
