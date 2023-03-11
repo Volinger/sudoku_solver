@@ -66,4 +66,4 @@ class TestSudokuGenerator:
         assert generator.check_next_single_option_position() == (3, 3)
 
     def test_check_next_single_option_position__none(self, generator):
-        assert generator.check_next_single_option_position() == -1
+        assert generator.check_next_single_option_position() is None

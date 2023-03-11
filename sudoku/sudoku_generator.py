@@ -42,7 +42,7 @@ class SudokuGenerator:
             while True:
                 if self.check_no_options():
                     self.rollback_last_random()
-                elif (position := self.check_next_single_option_position()) != -1:
+                elif (position := self.check_next_single_option_position()) is not None:
                     self.fill_single_choice(position)
                 else:
                     break
@@ -103,7 +103,7 @@ class SudokuGenerator:
         :return:
         """
         next_position = self.sudoku.get_next_free_position()
-        if not next_position == -1:
+        if next_position is not None:
             options = np.arange(1, self.sudoku.get_size()+1)
             allowed_mask = self.get_allowed_numbers()[next_position]
             allowed_options = options[allowed_mask]
@@ -115,12 +115,12 @@ class SudokuGenerator:
     def check_next_single_option_position(self):
         """
         Scan grid for next position, which has only 1 number available as option.
-        :return: coords (x, y) or -1 if not found
+        :return: coords (x, y) or None if not found
         """
         for position in np.ndindex(self.get_allowed_numbers().shape[:2]):
             if sum(self.get_allowed_numbers()[position]) == 1 and self.sudoku.get_position(position) == 0:
                 return position
-        return -1
+        return None
 
     def fill_single_choice(self, position):
         """

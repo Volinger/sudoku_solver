@@ -1,6 +1,5 @@
 """
-Simple code generator which generates python module, test class and tests which copy class/method structure in
-given
+Simple code generator which generates python module, test class and tests which copy class/method structure in given
 module.
 """
 
