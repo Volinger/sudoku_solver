@@ -148,9 +148,9 @@ class SudokuCore:
                 return position
         return -1
 
-    def attempt_to_solve(self):
+    def check_solvable(self):
         """
-        Attempt to solve sudoku. If not possible, throws an error.
+        Attempt to solve sudoku. Does same thing as solve, but reverts changes if solving fails.
         :return:
         """
         original_grid = self.grid.copy()

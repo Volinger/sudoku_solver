@@ -17,9 +17,11 @@ class SudokuHandler:
 		self.sudoku = None
 		self.user_grid = None
 
-	def generate(self, size=9, seed=None):
+	def generate(self, size: int=9, seed: int=None):
 		"""
-		generate sudoku object
+		Generate sudoku object
+		:param size: Sudoku grid size, can be 4,9,16... Note: sizes larger than 16 are not recommended.
+		:param seed: Leave empty for random sudoku, or specify if you wish to have reproducible generation.
 		:return:
 		"""
 		generator = SudokuGenerator(size=size)
@@ -27,9 +29,13 @@ class SudokuHandler:
 		self.sudoku = generator.sudoku
 		self.completed_grid = generator.sudoku.grid
 
-	def prepare_for_solving(self, cells_to_remove):
+	def prepare_for_solving(self, cells_to_remove: int):
 		"""
-		prepare sudoku so it can be solved
+		Prepare sudoku so it can be solved by randomly removing specified number of cells. Guarantees that sudoku
+		will be still solvable. if the specified cells_to_remove is too high and would cause sudoku to be unsolvable,
+		it will remove only as many cells as possible.
+		possible.
+		:param cells_to_remove: Number of cells which will be removed from completed sudoku.
 		:return:
 		"""
 		if self.sudoku is not None:
@@ -82,7 +88,7 @@ class SudokuHandler:
 		"""
 		sudoku = SudokuCore()
 		sudoku.from_grid(grid)
-		solved = sudoku.attempt_to_solve()
+		solved = sudoku.solve()
 		if solved:
 			self.completed_grid = sudoku.grid
 		else:
