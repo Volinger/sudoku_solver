@@ -55,7 +55,7 @@ class SudokuPreparer:
             random_position = self.select_random_filled_position()
             previous_value = self.sudoku.grid[random_position]
             self.sudoku.grid[random_position] = 0
-            solvable = self.sudoku.check_solvable()
+            solvable = self.sudoku.attempt_to_solve()
             self.available_for_removal[random_position] = False
             if solvable:
                 return True

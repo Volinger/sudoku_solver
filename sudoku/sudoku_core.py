@@ -1,4 +1,5 @@
 import numpy as np
+import sudoku.exceptions as exceptions
 
 
 class SudokuCore:
@@ -20,10 +21,22 @@ class SudokuCore:
         :param size: int, defines size of sudoku grid, i.e. 4 for numbers 1-4, 9 for numbers 1-9 etc.
         :return:
         """
+        self.validate_size(size)
         self.total_size = size  # size of sudoku = total_size * total_size, can be 4,9,16...
         self.grid = np.zeros((self.total_size, ) * 2, dtype=int)
         self.cell_size = int(self.total_size ** 0.5)
         self.init_possible_numbers()
+
+    def validate_size(self, size):
+        """
+        Check the sudoku size is valid (sqrt of size needs to be whole number)
+        :return:
+        """
+        sqrt = size ** 0.5
+        if sqrt == int(sqrt) and size != 1:
+            return
+        else:
+            raise Exception("Invalid sudoku size. Valid sizes are: 4,9,16...")
 
     def from_grid(self, grid):
         """
@@ -135,9 +148,9 @@ class SudokuCore:
                 return position
         return -1
 
-    def check_solvable(self):
+    def attempt_to_solve(self):
         """
-        Attempt to solve sudoku. Returns True if it is possible to solve it based on implemented solving steps.
+        Attempt to solve sudoku. If not possible, throws an error.
         :return:
         """
         original_grid = self.grid.copy()
@@ -147,6 +160,10 @@ class SudokuCore:
         return solvable
 
     def solve(self):
+        """
+        Tries to solve the sudoku. Returns True in case of success, False if it ws not able to solve the puzzle.
+        :return:
+        """
         self.reset_possible_numbers()
         while True:
             if (position := self.check_next_single_option_position()) != -1:
@@ -154,3 +171,5 @@ class SudokuCore:
                 self.fill_position(position, single_option_value)
             elif self.check_next_single_option_position() == -1:
                 return not (self.grid == 0).any()
+
+

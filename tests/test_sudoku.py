@@ -70,15 +70,15 @@ class TestSudoku:
         expected[0, :, 2] = False
         assert (sudoku_fixture.possible_numbers == expected).all()
 
-    def test_check_solvable__true(self, generator):
-        generator.generate_grid(50)
+    def test_attempt_to_solve__true(self, generator):
+        generator.generate_grid(seed=50)
         generator.sudoku.grid[0, 1] = 0
-        assert generator.sudoku.check_solvable()
+        assert generator.sudoku.attempt_to_solve()
 
-    def test_check_solvable__false(self, sudoku_fixture):
+    def test_attempt_to_solve__false(self, sudoku_fixture):
         sudoku_fixture.grid = np.zeros((4, 4))
         sudoku_fixture.possible_numbers.fill(True)
-        assert not sudoku_fixture.check_solvable()
+        assert not sudoku_fixture.attempt_to_solve()
 
     def test_solve(self, sudoku_fixture):
         sudoku_fixture.grid = np.asarray([[1, 2, 0, 3], [0, 0, 0, 0], [0, 0, 0, 0], [3, 0, 0, 2]])

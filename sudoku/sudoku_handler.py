@@ -5,10 +5,13 @@ Sudoku API
 from sudoku.sudoku_core import SudokuCore
 from sudoku.sudoku_prepare import SudokuPreparer
 from sudoku.sudoku_generator import SudokuGenerator
+import sudoku.exceptions as exceptions
 
 
 class SudokuHandler:
-
+	"""
+	Main class intended to handle API requests.
+	"""
 	def __init__(self):
 		self.completed_grid = None
 		self.sudoku = None
@@ -29,13 +32,16 @@ class SudokuHandler:
 		prepare sudoku so it can be solved
 		:return:
 		"""
-		preparer = SudokuPreparer(sudoku=self.sudoku)
-		self.sudoku = preparer.prepare(cells_to_remove=cells_to_remove)
-		self.user_grid = self.sudoku.grid
+		if self.sudoku is not None:
+			preparer = SudokuPreparer(sudoku=self.sudoku)
+			self.sudoku = preparer.prepare(cells_to_remove=cells_to_remove)
+			self.user_grid = self.sudoku.grid
+		else:
+			raise exceptions.GenerationException('Sudoku was not generated yet. Call .generate() before this method')
 
-	def get_grid(self):
+	def get_completed_grid(self):
 		"""
-		return sudoku grid
+		return completed sudoku grid
 		:return:
 		"""
 		return self.completed_grid
@@ -76,5 +82,8 @@ class SudokuHandler:
 		"""
 		sudoku = SudokuCore()
 		sudoku.from_grid(grid)
-		sudoku.solve()
-		self.completed_grid = sudoku.grid
+		solved = sudoku.attempt_to_solve()
+		if solved:
+			self.completed_grid = sudoku.grid
+		else:
+			raise exceptions.UnsolvableException("Could not solve selected sudoku.")
