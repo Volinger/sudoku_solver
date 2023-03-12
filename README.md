@@ -15,14 +15,17 @@
 
 ## Installation
 
-Package is located on PyPI: https://pypi.org/project/Sudoku-py-lib/
-
 You can download and install sudoku-py-lib with pip:
 
 ```bash
   pip install sudoku-py-lib
 ```
-    
+  
+## Links
+
+- PyPI: https://pypi.org/project/Sudoku-py-lib/
+- GitHub: https://github.com/Volinger/sudoku_solver/
+
 ## Dependencies
 
     numpy==1.24.2
