@@ -14,30 +14,29 @@ class Difficulty(IntEnum):
 class SudokuPreparer:
 
     def __init__(self, sudoku):
-        self.sudoku = None
         self.available_for_removal = None
         self.removed_all_numbers = False
         self.sudoku = sudoku
         self.available_for_removal = np.ndarray((self.sudoku.get_size(), ) * 2, dtype=bool)
         self.available_for_removal.fill(True)
 
-    def prepare(self, difficulty):
+    def prepare(self, cells_to_remove):
         """
         Prepare solved sudoku for solving by removing amount of numbers from grid based on difficulty.
         :param difficulty:
         :return:
         """
-        self.remove_numbers(difficulty)
+        self.remove_numbers(cells_to_remove)
         return self.sudoku
 
-    def remove_numbers(self, difficulty: Difficulty):
+    def remove_numbers(self, cells_to_remove):
         """
         Remove numbers in sudoku grid, until either required number of removals is reached, or no more numbers can be
         removed without making sudoku unsolvable.
         :param difficulty:
         :return:
         """
-        for x in range(difficulty):
+        for x in range(cells_to_remove):
             removed = self.remove_random_number()
             if not removed:
                 self.removed_all_numbers = True
