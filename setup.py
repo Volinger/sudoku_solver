@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='Sudoku-py-lib',
-    version='1.0.3',
+    version='1.0.4',
     packages=['sudoku'],
     url='',
     license='Apache 2.0',
