@@ -49,5 +49,5 @@ from sudoku import SudokuHandler
 sudoku_handler = SudokuHandler()  # Initialize handler object
 sudoku_handler.solve_grid(grid)   # Processes sudoku grid and solves it.
 
-print(sudoku_handler.completed_grid  # Returns completed sudoku as 2D list
+print(sudoku_handler.completed_grid)  # Returns completed sudoku as 2D list
 ```
